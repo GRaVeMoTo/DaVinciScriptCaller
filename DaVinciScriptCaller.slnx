@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="DaVinciScriptCaller.vcxproj" Id="d4a23984-5b27-470d-98cc-12ffbd54ecee" />
+</Solution>
