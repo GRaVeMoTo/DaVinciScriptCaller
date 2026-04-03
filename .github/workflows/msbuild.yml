@@ -62,9 +62,10 @@ jobs:
         $hash = (Get-FileHash -Path $file -Algorithm SHA256).Hash
         echo "sha256=$hash" >> $env:GITHUB_OUTPUT
         echo "$hash" | Out-File -FilePath "${{ runner.temp }}/DaVinciScriptCaller.exe.sha256" -Encoding UTF8
+        echo $env:GITHUB_OUTPUT
 
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.0
       if: success()
       with:
         name: DaVinciScriptCaller.exe
