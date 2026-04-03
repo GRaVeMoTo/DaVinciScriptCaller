@@ -58,7 +58,7 @@ jobs:
       id: hash
       shell: pwsh
       run: |
-        $file = "${{ env.GITHUB_WORKSPACE }}/x64/${{ env.BUILD_CONFIGURATION }}/DaVinciScriptCaller.exe"
+        $file = "${{ env.SOLUTION_FILE_PATH }}/x64/${{ env.BUILD_CONFIGURATION }}/DaVinciScriptCaller.exe"
         $hash = (Get-FileHash -Path $file -Algorithm SHA256).Hash
         echo "sha256=$hash" >> $env:GITHUB_OUTPUT
         echo "$hash" | Out-File -FilePath "${{ runner.temp }}/DaVinciScriptCaller.exe.sha256" -Encoding UTF8
@@ -69,7 +69,7 @@ jobs:
       with:
         name: DaVinciScriptCaller.exe
         path: |
-          ${{env.GITHUB_WORKSPACE}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
+          ${{env.SOLUTION_FILE_PATH}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
           ${{runner.temp}}/DaVinciScriptCaller.exe.sha256
         retention-days: 7
 
@@ -78,7 +78,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ${{env.GITHUB_WORKSPACE}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
+          ${{env.SOLUTION_FILE_PATH}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
           ${{runner.temp}}/DaVinciScriptCaller.exe.sha256
         body: |
           **SHA256 Checksum:**
