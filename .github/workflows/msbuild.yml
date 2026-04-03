@@ -53,16 +53,40 @@ jobs:
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
       continue-on-error: false
 
+    - name: Calculate SHA256 Hash
+      if: success()
+      id: hash
+      shell: pwsh
+      run: |
+        $file = "${{ env.GITHUB_WORKSPACE }}/x64/${{ env.BUILD_CONFIGURATION }}/DaVinciScriptCaller.exe"
+        $hash = (Get-FileHash -Path $file -Algorithm SHA256).Hash
+        echo "sha256=$hash" >> $env:GITHUB_OUTPUT
+        echo "$hash" | Out-File -FilePath "${{ runner.temp }}/DaVinciScriptCaller.exe.sha256" -Encoding UTF8
+
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4
       if: success()
       with:
         name: DaVinciScriptCaller.exe
-        path: ${{env.GITHUB_WORKSPACE}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
+        path: |
+          ${{env.GITHUB_WORKSPACE}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
+          ${{runner.temp}}/DaVinciScriptCaller.exe.sha256
         retention-days: 7
 
-    - name: Create Release with Artifact
+    - name: Create Release with Artifact and SHA256
       if: success() && startsWith(github.ref, 'refs/tags/v')
       uses: softprops/action-gh-release@v1
       with:
-        files: ${{env.GITHUB_WORKSPACE}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
+        files: |
+          ${{env.GITHUB_WORKSPACE}}/x64/${{env.BUILD_CONFIGURATION}}/DaVinciScriptCaller.exe
+          ${{runner.temp}}/DaVinciScriptCaller.exe.sha256
+        body: |
+          **SHA256 Checksum:**
+          ```
+          ${{ steps.hash.outputs.sha256 }}
+          ```
+          
+          **How to verify:**
+          ```powershell
+          Get-FileHash DaVinciScriptCaller.exe -Algorithm SHA256
+          ```
